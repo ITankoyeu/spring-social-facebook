@@ -439,6 +439,19 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 		assertNull(feedEntry.getComments().get(1).getLikes());
 		assertEquals(3, feedEntry.getComments().get(1).getLikesCount());
 	}
+	
+	@Test
+	public void getFeedEntry_noComments(){
+			mockServer.expect(requestTo("https://graph.facebook.com/{post_id}")) //appropriate  post is needed
+			.andExpect(method(GET))
+			.andExpect(header("Authorization", "OAuth someAccessToken"))
+			.andRespond(withSuccess(jsonResource("testdata/post_nocomments"), MediaType.APPLICATION_JSON));
+			Post feedEntry = facebook.feedOperations().getPost("{post_id}"); //post id is needed
+			assertNull(feedEntry.getCommentCount());
+			assertNull(feedEntry.getComments());
+		
+	}
+
 
 	@Test(expected = NotAuthorizedException.class)
 	public void getFeedEntry_unauthorized() {
